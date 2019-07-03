@@ -1,85 +1,75 @@
 import React,{ Component } from 'react';
 import { View, Text, Button, StyleSheet, Image, TextInput,Alert,ImageBackground, TouchableOpacity } from 'react-native';
 
-class Botao extends Component{
-
-  constructor(props){
-    super(props);
-    this.state = {};
-    this.styles = StyleSheet.create({
-      botao:{
-        width:250,
-        height:50,
-        borderWidth: 2,
-        borderColor: props.color,
-        backgroundColor: 'transparent',
-        borderRadius: 25
-      },
-      botaoArea: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center'
-      },
-      botaoText: {
-        color: props.color,
-        fontSize: 14,
-        fontWeight: 'bold'
-      }
-    });
-  }
-
-
-
-  render(){
-    return(
-      <TouchableOpacity style={this.styles.botao} onPress={this.props.onPress} >
-          <View style={this.styles.botaoArea}>
-            <Text style={this.styles.botaoText}  >{this.props.text}</Text>
-          </View>
-      </TouchableOpacity>
-    );
-  }
-}
 
 export default class PrimeiroProjeto extends Component{
 
   constructor(props){
     super(props);
 
-    this.state = {
-      texto: "Frase do Dia..."
-    };
+    this.state = {n:0, botao: 'VAI'};
+    this.timer = null;
 
-    this.frases = [
-      'As montanhas da vida não existem apenas para que você chegue no topo, mas para que você aprenda o valor da escalada.',
-      'A vida pode até te derrubar, mas é você quem escolhe a hora de se levantar.',
-      'É melhor ser verdadeiro e solitário do que viver em falsidade e estar sempre acompanhado.',
-      'Ser feliz nao é ter uma vida perfeita, mas sim reconhecer que vale a pena viver apesar de todos os desafios e perdas.',
-      'Aprendi que não devo me importar com comentários que não vão mudar minha vida.',
-      'A vida tem sons, que pra gente ouvir precisa aprender a começar de novo. É como tocar o mesmo violão e nele compor uma nova canção.'
-    ];
-
-    this.quebrarBiscoito = this.quebrarBiscoito.bind(this);
+    this.vai = this.vai.bind(this);
+    this.limpar = this.limpar.bind(this);
 
   }
 
-  quebrarBiscoito(){
+  vai(){
+
     let s = this.state;
 
-    let r = Math.floor(Math.random() * this.frases.length);
+    if(this.timer != null){
+      //Parar o Timer
+      clearInterval(this.timer);
+      this.timer = null;
+      s.botao = "VAI";
+    }else{
+      //Começar o Timer
+      this.timer = setInterval(() => {
+        let s = this.state;
+        s.n += 0.1;
+        this.setState(s);
+      }, 100);
 
-    s.texto = this.frases[r];
+      s.botao = "PARAR";
+
+    }
+
     this.setState(s);
+
+  }
+
+  limpar(){
+    if(this.timer != null){
+      //Parar o Timer
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+
+    let s = this.state;
+    s.n = 0;
+
+    s.botao = "VAI";
+
+    this.setState(s);
+
   }
 
   render(){
     return(
 
       <View style={styles.body} >
-          <Image source={require('./images/cookie.png')} />
-          <Text style={styles.texto} >"{this.state.texto}"</Text>
-          <Botao color="#B59619" text="Quebrar Biscoito" onPress={this.quebrarBiscoito} />
+          <Image source={require('./images/relogio.png')} />
+          <Text style={styles.timer} >{this.state.n.toFixed(1)}</Text>
+          <View style={styles.botaoArea}>
+              <TouchableOpacity style={styles.botao} onPress={this.vai}  >
+                <Text style={styles.botaoText} >{this.state.botao}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.botao} onPress={this.limpar}  >
+                <Text style={styles.botaoText} >LIMPAR</Text>
+              </TouchableOpacity>
+          </View>
       </View>
 
     );
@@ -91,15 +81,34 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     paddingTop: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#2c1f30'
+  },
+  timer: {
+    color: '#baa07a',
+    fontSize: 80,
+    fontWeight: 'bold',
+    backgroundColor: 'transparent',
+    marginTop: -155
+  },
+  botaoArea:{
+    flexDirection: 'row',
+    height: 40,
+    marginTop: 80
+  },
+  botao:{
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: '#886532',
+    height: 40,
+    borderRadius: 5,
+    margin: 10
   },
-  texto:{
+  botaoText: {
     fontSize: 17,
-    color: '#B59619',
-    margin: 30,
-    fontStyle: 'italic',
-    textAlign: 'center'
+    fontWeight: 'bold',
+    color: '#fff'
   }
 });
